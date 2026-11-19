@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Sunset — GTA-style Cover Art Maker</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="app">
+  <section class="controls" aria-label="Cover controls">
+    <h1>Vice Sunset</h1>
+    <p class="tagline">Turn your photos and a caption into a multi-panel poster cover, in the style of a Vice City sunset. Everything stays on your machine — photos are never uploaded.</p>
+
+    <fieldset>
+      <legend>1 · Photos</legend>
+      <p class="hint">Add up to three photos. Each panel of the poster shows one of them; click a panel in the preview to pick which photo it uses.</p>
+      <div class="slots" id="slots"></div>
+      <div class="row">
+        <button id="fillAll" type="button">Fill every panel with photo 1</button>
+        <button id="samplePhotos" type="button">Load sample photos</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>2 · Layout &amp; size</legend>
+      <div class="row" id="layouts" role="group" aria-label="Poster layout"></div>
+      <label>Post size
+        <select id="size">
+          <option value="1080x1080">Square · 1080 × 1080</option>
+          <option value="1080x1350">Portrait · 1080 × 1350</option>
+          <option value="1920x1080">Landscape · 1920 × 1080</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>3 · Selected panel</legend>
+      <p class="hint" id="panelHint">Click a panel in the preview, then drag it to reposition the photo, or use the sliders.</p>
+      <label>Zoom <input id="zoom" type="range" min="1" max="3" step="0.01" value="1"></label>
+      <label>Pan left–right <input id="panX" type="range" min="-0.5" max="0.5" step="0.01" value="0"></label>
+      <label>Pan up–down <input id="panY" type="range" min="-0.5" max="0.5" step="0.01" value="0"></label>
+      <label>Photo in this panel
+        <select id="panelPhoto"></select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>4 · Caption &amp; grade</legend>
+      <label>Kicker <input id="kicker" type="text" maxlength="24" value="VICE SUNSET"></label>
+      <label>Title <input id="title" type="text" maxlength="32" value="Sunset Heist"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="48" value="One last score before sunrise"></label>
+      <label>Sunset grade <input id="grade" type="range" min="0" max="1" step="0.05" value="0.8"></label>
+      <label>Neon glow <input id="neon" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+    </fieldset>
+
+    <button id="export" type="button" class="primary">Export PNG</button>
+    <p id="status" role="status"></p>
+  </section>
+  <section class="preview" aria-label="Live preview">
+    <canvas id="cover" width="1080" height="1080" aria-label="The cover preview"></canvas>
+    <p class="hint">Live preview — click a panel to select it, drag to move its photo.</p>
+  </section>
+</main>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
