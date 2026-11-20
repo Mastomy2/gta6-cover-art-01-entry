@@ -1,7 +1,7 @@
 // Wires the page: photo slots, layout and size pickers, panel crop controls, caption fields and
 // export. Clicking a panel in the preview selects it; dragging pans its photo. A `?shot=` query
 // sets up a fixed scene for a screenshot instead (./shots.js).
-import { drawCover, renderCover, defaultState, LAYOUTS, SIZES } from './cover.js';
+import { drawCover, renderCover, defaultState, LAYOUTS, SIZES, panelRectFor, panelGap } from './cover.js';
 import { runShot } from './shots.js';
 
 const canvas = document.getElementById('cover');
@@ -100,12 +100,21 @@ function buildPanelPhotoSelect() {
   });
 }
 
+/** Shows the chosen export size under the preview, next to the Export button. */
+function updateExportHint() {
+  const hint = document.getElementById('exportHint');
+  if (!hint) return;
+  const [w, h] = SIZES[state.size] ?? SIZES['1080x1080'];
+  hint.textContent = `Exports as PNG at ${w} × ${h} — pick a size above, then Export PNG.`;
+}
+
 function bindControls() {
   document.getElementById('size').addEventListener('change', (e) => {
     state.size = e.target.value;
     const [w, h] = SIZES[state.size];
     canvas.width = w;
     canvas.height = h;
+    updateExportHint();
     redraw();
   });
   const bindRange = (id, key) => {
@@ -188,13 +197,19 @@ window.__loadSamples = loadSamples;
 /** The live state, for the screenshot driver to configure a scene. */
 window.__coverState = state;
 
-/** Picks the panel under a click on the preview canvas (canvas coordinates). */
+/** Picks the panel under a click on the preview canvas (canvas coordinates).
+ *  Uses the same panel rectangles the cover is drawn with, so a click lands on the
+ *  panel it looks like it lands on — including the caption band, which is no panel. */
 function panelAt(clientX, clientY) {
   const r = canvas.getBoundingClientRect();
-  const x = (clientX - r.left) / r.width;
-  const y = (clientY - r.top) / r.height;
+  const cx = (clientX - r.left) / r.width * canvas.width;
+  const cy = (clientY - r.top) / r.height * canvas.height;
   const layout = LAYOUTS[state.layout];
-  return layout.panels.findIndex((p) => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
+  const gap = panelGap(canvas.width);
+  return layout.panels.findIndex((p, i) => {
+    const rect = panelRectFor(layout, canvas.width, canvas.height, i, gap);
+    return cx >= rect.x && cx < rect.x + rect.w && cy >= rect.y && cy < rect.y + rect.h;
+  });
 }
 
 function bindCanvas() {
@@ -232,6 +247,7 @@ buildPanelPhotoSelect();
 bindControls();
 bindCanvas();
 syncPanelControls();
+updateExportHint();
 
 const shot = new URLSearchParams(location.search).get('shot');
 if (shot) {
