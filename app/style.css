@@ -22,11 +22,11 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; background: #120a1e; color: #f5eef7; font: 15px/1.45 "Inter", system-ui, sans-serif; }
-.app { display: flex; gap: 28px; align-items: flex-start; justify-content: center; padding: 24px; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 320px; flex: none; }
-.controls h1 { margin: 0; font-family: "Anton", sans-serif; font-size: 34px; letter-spacing: 1px; color: #ffb347; text-transform: uppercase; }
+.app { display: flex; gap: 24px; align-items: flex-start; justify-content: center; padding: 20px; }
+.controls { display: flex; flex-direction: column; gap: 10px; width: 320px; flex: none; }
+.controls h1 { margin: 0; font-family: "Anton", sans-serif; font-size: 32px; letter-spacing: 1px; color: #ffb347; text-transform: uppercase; }
 .tagline { margin: 0; color: #cdbfd6; }
-fieldset { margin: 0; padding: 12px; border: 1px solid #4a2d63; border-radius: 10px; background: #1d1229; }
+fieldset { margin: 0; padding: 10px; border: 1px solid #4a2d63; border-radius: 10px; background: #1d1229; }
 legend { font-weight: 700; padding: 0 6px; color: #ffb347; }
 .hint { margin: 0 0 8px; color: #b3a3c2; font-size: 13px; }
 label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; margin-top: 8px; }
