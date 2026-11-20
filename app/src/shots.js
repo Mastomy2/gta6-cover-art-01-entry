@@ -1,6 +1,6 @@
 // Fixed scenes for screenshots: ?shot=editor shows the page with sample photos loaded;
 // ?shot=cover shows the cover alone at export size. window.__shotReady is set once painted.
-import { SIZES } from './cover.js';
+import { SIZES, LAYOUTS } from './cover.js';
 
 export async function runShot(shot, query, state, loadImage, redraw) {
   const photoA = query.get('photo') ?? 'boulevard';
@@ -23,7 +23,19 @@ export async function runShot(shot, query, state, loadImage, redraw) {
   state.panels[1].zoom = 1.25;
   state.panels[2].zoom = 1.1;
   state.panels[3].zoom = 1.2;
-
+  // Per-panel zoom as `?zoom=z0,z1,...` to frame the shot scene.
+  const zooms = (query.get('zoom') ?? '').split(',');
+  state.panels.forEach((slot, i) => {
+    const z = Number(zooms[i]);
+    if (Number.isFinite(z) && z > 0) slot.zoom = z;
+  });
+  // Per-panel pan as `?pan=x0,y0;x1,y1;...` to frame faces in the shot scene.
+  const pans = (query.get('pan') ?? '').split(';');
+  state.panels.forEach((slot, i) => {
+    const [px, py] = (pans[i] ?? '0,0').split(',').map(Number);
+    if (Number.isFinite(px)) slot.x = px;
+    if (Number.isFinite(py)) slot.y = py;
+  });
   if (shot === 'cover') {
     document.body.classList.add('shot-cover');
     const sizeKey = query.get('size') ?? '1080x1080';
@@ -33,6 +45,15 @@ export async function runShot(shot, query, state, loadImage, redraw) {
     canvas.height = h;
     state.size = sizeKey;
   }
+  // Keep the editor's controls in step with the scene: layout buttons, size
+  // picker and caption fields, so the editor screenshot shows the same cover.
+  document.querySelectorAll('#layouts button').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.textContent === (LAYOUTS[state.layout]?.label ?? '')));
+  });
+  document.getElementById('size').value = state.size;
+  document.getElementById('kicker').value = state.kicker;
+  document.getElementById('title').value = state.title;
+  document.getElementById('subtitle').value = state.subtitle;
   await document.fonts.ready;
   redraw();
   requestAnimationFrame(() => requestAnimationFrame(() => { window.__shotReady = true; }));
